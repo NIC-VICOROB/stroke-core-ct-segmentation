@@ -1,1 +1,1 @@
-{}
+{"isles18": {"path": "/storage/models/isles18ensemble.pt", "num_modalities": 10, "symmetric_modalities": true}}

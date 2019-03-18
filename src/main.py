@@ -103,7 +103,7 @@ def run_training(params=None):
 
         # Prediction
         'patch_shape_pred': (64, 64, 1),
-        'uncertainty': {'runs': 0, 'rate': 0.1, 'type': 'alpha'}
+        'uncertainty': {'runs': 3, 'rate': 0.1, 'type': 'alpha'}
     }
 
     # if params is not None:
@@ -205,11 +205,10 @@ def run_inference(params=None):
     with open(models_dict_pathfile, 'r') as models_file:
         pretrained_dict = json.loads(models_file.read())  # use `json.dumps` to do the reverse
 
-    # Load path and associated options
+    # Load path and associated optionsS
     pretrained_path = pretrained_dict[params['pretrained_name']]['path']
     pretrained_sym = pretrained_dict[params['pretrained_name']]['symmetric_modalities']
     pretrained_num_mods = pretrained_dict[params['pretrained_name']]['num_modalities']
-
 
     # 1st load dataset
     dataset = DataTXT(
@@ -242,9 +241,9 @@ def run_inference(params=None):
         lesion_class=1,
         uncertainty_passes=3,
         uncertainty_dropout=0.1,
-        zeropad_shape = patch_shape_pred,
+        zeropad_shape=patch_shape_pred,
         instruction_generator=PatchGeneratorBuilder(
-            batch_size=64,
+            batch_size=256,
             shuffle=False,
             zeropad_shape=None,
             instruction_generator=PatchInstructionGenerator(
@@ -261,8 +260,5 @@ def run_inference(params=None):
     test_pred.predict_test_set(model_def, dataset.train)
 
 
-
 if __name__ == '__main__':
     launch_code()
-
-    

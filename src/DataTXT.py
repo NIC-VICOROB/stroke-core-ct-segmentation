@@ -79,6 +79,9 @@ class DataTXT(NIC_Dataset):
             symmetric_images = []
             if self.symmetric_dict is not None:
                 symmetric_images = [nib.load(self.symmetric_dict[fp] + '.gz').get_data() for fp in original_filepaths]
+                if self.do_skull_strip:
+                    symmetric_images[0] = skull_strip_ct_isles18(symmetric_images[0], symmetric_images[1:])
+
             # get all images in one list
             all_images = original_images + symmetric_images
 

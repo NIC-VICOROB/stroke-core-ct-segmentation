@@ -55,7 +55,7 @@ class OtherGUI:
 
         self.test_datapath_entry = Entry(self.test_data_frame, width=60)
         self.test_datapath_entry.pack(side=LEFT)
-        self.test_datapath_entry.configure(state='disabled')
+        self.test_datapath_entry.config(state='disabled')
 
         self.test_datapath_browse = Button(self.test_data_frame, text="Browse...", command=self.test_datapath_dialog)
         self.test_datapath_browse.pack(side=LEFT)
@@ -82,8 +82,8 @@ class OtherGUI:
 
         self.test_model_stringvar = StringVar()
         self.test_pretrain_combo = Combobox(self.test_model_frame, takefocus=False,
-                                            textvariable=self.test_model_stringvar, validate='all',
-                                            validatecommand=self.validate_update_pretrained_model_list)
+                                            textvariable=self.test_model_stringvar,
+                                            postcommand=self.validate_update_pretrained_model_list)
         self.test_pretrain_combo['values'] = ['None', ] + [model_key for model_key in self.models_list]
         self.test_pretrain_combo.current(0)
         self.test_pretrain_combo.configure(state='readonly')
@@ -152,8 +152,7 @@ class OtherGUI:
         self.pretrain_lbl = Label(self.model_frame, text="Use pre-trained model: ")
         self.pretrain_lbl.grid(column=0, row=1, columnspan=2, pady=self.pad_y)
 
-        self.pretrain_combo = Combobox(self.model_frame, validate='all',
-                                       validatecommand=self.validate_update_pretrained_model_list)
+        self.pretrain_combo = Combobox(self.model_frame, postcommand=self.validate_update_pretrained_model_list)
         self.pretrain_combo['values'] = ['None', ] + [model_key for model_key in self.models_list]
         self.pretrain_combo.current(0)
         self.pretrain_combo.configure(state='readonly')
@@ -239,7 +238,7 @@ class OtherGUI:
             return False
 
         self.test_error_lbl.config(foreground="#000")
-        self.test_error_stringvar.set('Opening terminal...')
+        self.test_error_stringvar.set('Running in terminal...')
 
         self.disable_test_gui()
         self.launch_docker(config_dict)
@@ -288,7 +287,7 @@ class OtherGUI:
             return False
 
         self.error_lbl.config(foreground="#000")
-        self.error_stringvar.set('Opening terminal...')  # NO ERRORS!
+        self.error_stringvar.set('Running in terminal...')  # NO ERRORS!
 
         self.disable_train_gui()
         self.launch_docker(config_dict)
@@ -311,6 +310,7 @@ class OtherGUI:
             docker_build_command = "docker build --tag=strokect ."
             self.proc = subprocess.Popen(docker_build_command, universal_newlines=True, shell=True)
             self.wait_for_process()
+            self.proc.wait()
             make_dict.update({'initialized': True})
 
         with open('storage/make.txt', 'w') as config_file:
